@@ -491,6 +491,7 @@ var um={role:'user',text:text||('Sent '+fns.length+' file'+(fns.length>1?'s':'')
 c.messages.push(um);
 if(!c.customTitle){c.title=(text||'New chat').slice(0,42);chatTitle.value=c.title}
 touch(c);enterChat();renderAll();scrollBottom();
+var retryText=text;var retryFiles=files.slice();
 prompt.value='';files=[];renderFiles();
 var node=document.createElement('div');node.className='msg ai';
 var body=document.createElement('div');body.className='ai-text';
@@ -504,7 +505,8 @@ var cc=cur();if(cc&&cc.id===c.id){cc.messages.push(am);touch(cc)}
 node.replaceWith(aiNode(am));
 }).catch(function(err){
 node.remove();
-errorNotice(null,"Couldn't reach Sonnet 4.6: "+err.message);
+prompt.value=retryText;files=retryFiles;renderFiles();
+errorNotice(null,"RateLimited/Retry — please try sending again.");
 }).then(function(){pending=false;sendBtn.disabled=false;prompt.focus();scrollBottom()});
 });
 chatTitle.addEventListener('input',function(){var c=cur();if(!c)return;c.title=chatTitle.value||'New chat';c.customTitle=true;save();renderList()});
